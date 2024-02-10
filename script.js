@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
         
         // Verifica si todos los campos de entrada tienen un valor
         if (player1Input.value === '' || player2Input.value === '' || player3Input.value === '' || player4Input.value === '' || tamanoCarton === '') {
-            // Muestra un mensaje emergente
+            // aLERTA AAAAh
             alert('Please complete all fields to start the game.');
             
             // Deshabilita el botón "Start Game"
