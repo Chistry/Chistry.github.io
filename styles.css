@@ -1,0 +1,76 @@
+body {
+    background-color: #3b97bb;
+    font-family: 'Times New Roman', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+
+.imagenBingo {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.imagenBingo img{
+    background-color: rgba(255, 255, 255, 0.5);
+    background-blend-mode: overlay;
+    padding: 0px;
+    margin: 0%;
+    border-radius: 0px;
+    width: 100%;
+    object-fit: cover;
+    height: auto;
+    position: absolute;
+    z-index: -1;
+    position: absolute;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+div h1 {
+    color: rgb(0, 0, 0);
+}
+
+#titulo {
+    position: relative;
+    color: 0,0,0;
+    font-size: 75px;
+    font: bold;
+    font-weight: bold;
+    text-align: center;
+    margin: auto;
+    padding: 0px;
+    background-color: rgba(255, 255, 255, 0.651);
+    
+
+}
+
+.container {
+    position: relative;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.players input {
+    margin: 10px;
+}
+
+.board-size button {
+    margin: 10px;
+}
+
+@media screen and (max-width: 600px) {
+    .players input, .board-size button {
+        margin: 5px;
+    }
+}
+
