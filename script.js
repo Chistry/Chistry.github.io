@@ -8,6 +8,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var nextTurnButton = document.getElementById('nextTurn');
     var generatedNumbers = [];
     const playerScores = [0, 0, 0, 0];
+    let winner = {
+        name: '',
+        victories: 0
+    };
+    let gameEnded = false;
 
     // Función para habilitar o deshabilitar el botón "Start Game"
     function habilitarStartGame() {
@@ -221,9 +226,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
     // Agregar un evento de escucha al botón para cambiar el turno
     nextTurnButton.addEventListener('click', function() {
         // Si el contador de turnos es mayor que 25, reiniciarlo a 1
-        if(turnCounter >= 25) {
-            turnCounter = 1;
-            generatedNumbers = []; // Reinicia el array de números generados
+        if(turnCounter === 25) {
+            generatedNumbers = [];
+            finalizarPartida();
         } else {
             // Incrementar el contador de turnos
             turnCounter++;
@@ -424,7 +429,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
             puntuacionElement.textContent = `${players[i]}: ${playerScores[i]}`;
         }
     }
-
+    
     // Evento para escuchar los clics en el botón de tamaño 3
     size3Button.addEventListener('click', function() {
         resetGame();
@@ -446,24 +451,139 @@ document.addEventListener('DOMContentLoaded', (event) => {
         habilitarStartGame();
     });
 
-    // Función para reiniciar el juego
-    function resetGame() {
-        generatedNumbers = [];
-        playerScores.fill(0);
+    var botonReinicioCreado = false;
 
-        // Reiniciar los valores de completitud en las tablas
-        const tablas = document.querySelectorAll('table');
-        tablas.forEach(tabla => {
-            tabla.dataset.filaCompleta = false;
-            tabla.dataset.columnaCompleta = false;
-            tabla.dataset.diagonalPrincipalCompleta = false;
-            tabla.dataset.diagonalSecundariaCompleta = false;
-            tabla.dataset.tablaCompleta = false;
-        });
+    function finalizarPartida() {
+        nextTurnButton.disabled = true;
+        // Verificar si la partida ya ha finalizado
+        if (gameEnded) {
+            return;
+        }
+        // Eliminar contenedor de ganadores existente, si lo hay
+        const ganadoresContainerExistente = document.getElementById('ganadoresContainer');
+        if (ganadoresContainerExistente) {
+            ganadoresContainerExistente.remove();
+        }
+        // Muestra los ganadores en pantalla
+        const ganadoresContainer = document.createElement('div');
+        ganadoresContainer.id = 'ganadoresContainer';
+        ganadoresContainer.innerHTML = `<h2>Ganadores:</h2><p>${winner.name} - ${winner.victories} victorias</p>`;
+        document.body.appendChild(ganadoresContainer);
 
-        // Reiniciar el contenido de los elementos de puntuación en el HTML
-        actualizarPuntuacion();
+        // Muestra el botón de reinicio solo si no se ha creado antes
+        let reinicioButton = document.getElementById('reinicioButton');
+        
+        reinicioButton = document.createElement('button');
+        reinicioButton.id = 'reinicioButton';
+        reinicioButton.textContent = 'Reiniciar Partida';
+        reinicioButton.addEventListener('click', resetGame);
+        document.body.appendChild(reinicioButton);
+        
+
+        // Actualiza la bandera de finalización del juego
+        gameEnded = true;
     }
 
+    // // Obtén el botón de reinicio o crea uno nuevo si no existe
+    // let reinicioButton = document.getElementById('reinicioButton');
+    // if (!reinicioButton) {
+    //     reinicioButton = document.createElement('button');
+    //     reinicioButton.id = 'reinicioButton';
+    //     // Aquí puedes agregar cualquier otro código necesario para configurar el botón
+    //     document.body.appendChild(reinicioButton);
+    // }
+    // Intenta obtener el botón de reinicio existente
+    //let restartButton = document.getElementById('restartButton');
+
+    // Si el botón de reinicio no existe, lo crea
+
+    
+
+    // Agrega el evento de click al botón de reinicio
+    //restartButton.addEventListener('click', resetGame);
+
+    // // Actualizar localStorage con las victorias al finalizar el juego
+    // window.addEventListener('beforeunload', function () {
+    //     localStorage.setItem('victories', JSON.stringify(winner));
+    // });
+
+
+    // Función para reiniciar el juego
+    function resetGame() {
+        //botonReinicioCreado = false;
+
+        // Intenta obtener el botón de reinicio existente
+        let restartButton = document.getElementById('reinicioButton');
+
+        // Si el botón de reinicio existe, agrega el evento de click
+        if (restartButton) {
+            restartButton.addEventListener('click', resetGame);
+        }
+        
+
+        // Añadir el nuevo botón al documento
+        document.body.appendChild(restartButton);
+        // Ocultar solo el menú de jugadores
+        const menuJugadores = document.querySelector('.container');
+        menuJugadores.classList.add('hidden');
+
+        // Ocultar las estadísticas
+        const estadisticas = document.getElementById('puntuaciones');
+        estadisticas.classList.add('hidden');
+
+        // Ocultar los botones del menú de jugadores
+        for (let i = 1; i <= 4; i++) {
+            const playerButton = document.getElementById(`playerButton${i}`);
+            if (playerButton) {
+                playerButton.classList.add('hidden');
+            }
+        }
+
+        // Elimina la tabla de bingo vieja de cada jugador
+        const tablasAntiguas = document.querySelectorAll('table');
+        tablasAntiguas.forEach(tabla => tabla.remove());
+
+        // Oculta la puntuación pasada y la reinicia
+        playerScores.fill(0);
+        actualizarPuntuacion();
+
+        // Oculta el medidor de turnos y numeroBall
+        counterElement.classList.add('hidden');
+        nextTurnButton.classList.add('hidden');
+        for (var i = 0; i < BingoBall.length; i++) {
+            BingoBall[i].classList.add('hidden');
+        }
+
+        // Retorna a CD como está al iniciar la página
+        numeroBall.textContent = 'CD';
+
+        // Elimina el contenedor de ganadores y el botón de reinicio
+        const ganadoresContainer = document.getElementById('ganadoresContainer');
+        if (ganadoresContainer) {
+            ganadoresContainer.remove();
+        }
+
+        // Obtén el botón de reinicio o crea uno nuevo si no existe
+        let reinicioButton = document.getElementById('reinicioButton');
+        if (!reinicioButton) {
+            reinicioButton = document.createElement('button');
+            reinicioButton.id = 'reinicioButton';
+            // Aquí puedes agregar cualquier otro código necesario para configurar el botón
+            document.body.appendChild(reinicioButton);
+        }
+
+        // Ahora puedes estar seguro de que reinicioButton no es null
+        reinicioButton.classList.add('hidden');
+
+        // Reinicia la bandera de finalización del juego
+        gameEnded = false;
+
+        // Muestra el menú principal y habilita el botón de inicio de juego
+        menuJugadores.classList.remove('hidden');
+        startGameButton.disabled = false;
+
+        // Habilita el botón Next Turn al reiniciar la partida
+        nextTurnButton.disabled = false;
+    }
 })
 
