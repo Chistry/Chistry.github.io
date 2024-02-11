@@ -88,8 +88,12 @@ td {
     font-size: 20px;
 }
 
-.hidden {
+div.container.hidden {
     display: none;
+}
+
+.hidden {
+    display: none !important;
 }
 
 .BingoBall {
@@ -174,4 +178,5 @@ td {
 td.marked {
     background-color: rgba(255, 0, 0, 0.33);
 }
+
 
