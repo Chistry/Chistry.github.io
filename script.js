@@ -7,7 +7,8 @@ document.addEventListener('DOMContentLoaded', (event) => {
     var counterElement = document.getElementById('turnCounter');
     var nextTurnButton = document.getElementById('nextTurn');
     var generatedNumbers = [];
-    
+    const playerScores = [0, 0, 0, 0];
+
     // Función para habilitar o deshabilitar el botón "Start Game"
     function habilitarStartGame() {
         // Obtén los campos de entrada de los jugadores
@@ -45,6 +46,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
             players = [player1Input.value, player2Input.value, player3Input.value, player4Input.value];
             startGame();
             marcarNumeroEnTabla(numeroAleatorio);
+            // Mostrar la sección de puntuaciones
+            const puntuacionesContainer = document.getElementById('puntuaciones');
+            puntuacionesContainer.classList.remove('hidden');
 
         }
 
@@ -147,12 +151,23 @@ document.addEventListener('DOMContentLoaded', (event) => {
             BingoBall[i].classList.remove('hidden');
         }
     
+        // Asignar nombres de jugadores a las puntuaciones
+        for (let i = 0; i < players.length; i++) {
+            const puntuacionElement = document.getElementById(`puntuacion-${i + 1}`);
+            puntuacionElement.textContent = `${players[i]}: 0`;
+        }
+    
+        // ... (tu código existente)
+    
         // Generar tablas para cada jugador y ocultarlas
         const tablasPorJugador = [];
         for (let i = 0; i < players.length; i++) {
             const tablaJugador = generarTabla(tamanoCarton, i + 1);
             tablasPorJugador.push(tablaJugador);
             tablaJugador.classList.add('hidden');
+            if (i === 0) {
+                tablaJugador.classList.add('tablaVisible'); // Añade la clase 'tablaVisible' a la primera tabla
+            }
         }
     
         // Añadir evento de clic a los botones de los jugadores para mostrar sus tablas
@@ -174,27 +189,33 @@ document.addEventListener('DOMContentLoaded', (event) => {
             });
             playerButtonsContainer.appendChild(button);
         });
-        
+    
         playerButtonsContainer.classList.remove('hidden');
         playerButtonsContainer.firstChild.click();
-    }
+    
 
+    }
+    
+
+    // Función para marcar un número en la tabla actual
     function marcarNumeroEnTabla(numero) {
         // Obtén todas las tablas
         const tablas = document.querySelectorAll('table');
-    
+
         tablas.forEach((tabla, jugadorIndex) => {
             // Busca todos los cuadros de la tabla
             const cuadros = tabla.querySelectorAll('td');
-    
+
             // Itera sobre los cuadros y busca el que contiene el número
             cuadros.forEach((cuadro) => {
                 if (parseInt(cuadro.textContent, 10) === numero) {
                     cuadro.classList.add('marked');
                 }
             });
+
+            // Verifica la completitud de líneas y actualiza la puntuación
+            checkLineCompletion(tabla);
         });
-        
     }
 
     // Agregar un evento de escucha al botón para cambiar el turno
@@ -250,4 +271,199 @@ document.addEventListener('DOMContentLoaded', (event) => {
             }
         });
     });
-});
+    
+        // Función para verificar si una línea ha sido completada en una tabla
+    function checkLineCompletion(tabla) {
+        const cuadros = tabla.querySelectorAll('td');
+        const tamano = Math.sqrt(cuadros.length);
+
+        // Verificar filas y columnas
+        for (let i = 0; i < tamano; i++) {
+            let filaCompleta = true;
+            let columnaCompleta = true;
+
+            for (let j = 0; j < tamano; j++) {
+                if (!cuadros[i * tamano + j].classList.contains('marked')) {
+                    filaCompleta = false;
+                }
+                if (!cuadros[j * tamano + i].classList.contains('marked')) {
+                    columnaCompleta = false;
+                }
+            }
+
+            // Sumar puntos si se completa una fila o columna
+            if (filaCompleta) {
+                playerScores[parseInt(tabla.id.split('-')[1]) - 1] += 1;
+            }
+            if (columnaCompleta) {
+                playerScores[parseInt(tabla.id.split('-')[1]) - 1] += 1;
+            }
+        }
+
+        // Verificar diagonal principal
+        let diagonalPrincipalCompleta = true;
+        for (let i = 0; i < tamano; i++) {
+            if (!cuadros[i * tamano + i].classList.contains('marked')) {
+                diagonalPrincipalCompleta = false;
+                break;
+            }
+        }
+        if (diagonalPrincipalCompleta) {
+            playerScores[parseInt(tabla.id.split('-')[1]) - 1] += 3;
+        }
+
+        // Verificar diagonal secundaria
+        let diagonalSecundariaCompleta = true;
+        for (let i = 0; i < tamano; i++) {
+            if (!cuadros[i * tamano + (tamano - 1 - i)].classList.contains('marked')) {
+                diagonalSecundariaCompleta = false;
+                break;
+            }
+        }
+        if (diagonalSecundariaCompleta) {
+            playerScores[parseInt(tabla.id.split('-')[1]) - 1] += 3;
+        }
+
+        // Verificar tabla completa
+        let tablaCompleta = true;
+        for (let i = 0; i < cuadros.length; i++) {
+            if (!cuadros[i].classList.contains('marked')) {
+                tablaCompleta = false;
+                break;
+            }
+        }
+        if (tablaCompleta) {
+            playerScores[parseInt(tabla.id.split('-')[1]) - 1] += 5;
+        }
+    }
+
+    // Función para actualizar la puntuación de los jugadores
+    function actualizarPuntuacion() {
+        // Actualizar la puntuación en el HTML
+        for (let i = 0; i < players.length; i++) {
+            const puntuacionElement = document.getElementById(`puntuacion-${i + 1}`);
+            puntuacionElement.textContent = `${players[i]}: ${playerScores[i]}`;
+        }
+    }
+    // Función para verificar si una línea ha sido completada en una tabla
+    function checkLineCompletion(tabla) {
+        const cuadros = tabla.querySelectorAll('td');
+        const tamano = Math.sqrt(cuadros.length);
+
+        // Verificar filas y columnas
+        let filaCompleta, columnaCompleta;
+        for (let i = 0; i < tamano; i++) {
+            filaCompleta = true;
+            columnaCompleta = true;
+
+            for (let j = 0; j < tamano; j++) {
+                if (!cuadros[i * tamano + j].classList.contains('marked')) {
+                    filaCompleta = false;
+                }
+                if (!cuadros[j * tamano + i].classList.contains('marked')) {
+                    columnaCompleta = false;
+                }
+            }
+
+            // Sumar puntos solo si la fila o columna se completa por primera vez
+            if (filaCompleta && !tabla.dataset.filaCompleta) {
+                tabla.dataset.filaCompleta = true;
+                playerScores[parseInt(tabla.id.split('-')[1]) - 1] += 1;
+            }
+            if (columnaCompleta && !tabla.dataset.columnaCompleta) {
+                tabla.dataset.columnaCompleta = true;
+                playerScores[parseInt(tabla.id.split('-')[1]) - 1] += 1;
+            }
+        }
+
+        // Verificar diagonal principal
+        let diagonalPrincipalCompleta = true;
+        for (let i = 0; i < tamano; i++) {
+            if (!cuadros[i * tamano + i].classList.contains('marked')) {
+                diagonalPrincipalCompleta = false;
+                break;
+            }
+        }
+        if (diagonalPrincipalCompleta && !tabla.dataset.diagonalPrincipalCompleta) {
+            tabla.dataset.diagonalPrincipalCompleta = true;
+            playerScores[parseInt(tabla.id.split('-')[1]) - 1] += 3;
+        }
+
+        // Verificar diagonal secundaria
+        let diagonalSecundariaCompleta = true;
+        for (let i = 0; i < tamano; i++) {
+            if (!cuadros[i * tamano + (tamano - 1 - i)].classList.contains('marked')) {
+                diagonalSecundariaCompleta = false;
+                break;
+            }
+        }
+        if (diagonalSecundariaCompleta && !tabla.dataset.diagonalSecundariaCompleta) {
+            tabla.dataset.diagonalSecundariaCompleta = true;
+            playerScores[parseInt(tabla.id.split('-')[1]) - 1] += 3;
+        }
+
+        // Verificar tabla completa
+        let tablaCompleta = true;
+        for (let i = 0; i < cuadros.length; i++) {
+            if (!cuadros[i].classList.contains('marked')) {
+                tablaCompleta = false;
+                break;
+            }
+        }
+        if (tablaCompleta && !tabla.dataset.tablaCompleta) {
+            tabla.dataset.tablaCompleta = true;
+            playerScores[parseInt(tabla.id.split('-')[1]) - 1] += 5;
+        }
+    }
+
+
+    function actualizarPuntuacion() {
+        // Actualizar la puntuación en el HTML
+        for (let i = 0; i < players.length; i++) {
+            const puntuacionElement = document.getElementById(`puntuacion-${i + 1}`);
+            puntuacionElement.textContent = `${players[i]}: ${playerScores[i]}`;
+        }
+    }
+
+    // Evento para escuchar los clics en el botón de tamaño 3
+    size3Button.addEventListener('click', function() {
+        resetGame();
+        tamanoCarton = 3;
+        habilitarStartGame();
+    });
+
+    // Evento para escuchar los clics en el botón de tamaño 4
+    size4Button.addEventListener('click', function() {
+        resetGame();
+        tamanoCarton = 4;
+        habilitarStartGame();
+    });
+
+    // Evento para escuchar los clics en el botón de tamaño 5
+    size5Button.addEventListener('click', function() {
+        resetGame();
+        tamanoCarton = 5;
+        habilitarStartGame();
+    });
+
+    // Función para reiniciar el juego
+    function resetGame() {
+        generatedNumbers = [];
+        playerScores.fill(0);
+
+        // Reiniciar los valores de completitud en las tablas
+        const tablas = document.querySelectorAll('table');
+        tablas.forEach(tabla => {
+            tabla.dataset.filaCompleta = false;
+            tabla.dataset.columnaCompleta = false;
+            tabla.dataset.diagonalPrincipalCompleta = false;
+            tabla.dataset.diagonalSecundariaCompleta = false;
+            tabla.dataset.tablaCompleta = false;
+        });
+
+        // Reiniciar el contenido de los elementos de puntuación en el HTML
+        actualizarPuntuacion();
+    }
+
+})
+
