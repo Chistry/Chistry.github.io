@@ -162,7 +162,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
             puntuacionElement.textContent = `${players[i]}: 0`;
         }
     
-        // ... (tu código existente)
     
         // Generar tablas para cada jugador y ocultarlas
         const tablasPorJugador = [];
@@ -484,29 +483,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         gameEnded = true;
     }
 
-    // // Obtén el botón de reinicio o crea uno nuevo si no existe
-    // let reinicioButton = document.getElementById('reinicioButton');
-    // if (!reinicioButton) {
-    //     reinicioButton = document.createElement('button');
-    //     reinicioButton.id = 'reinicioButton';
-    //     // Aquí puedes agregar cualquier otro código necesario para configurar el botón
-    //     document.body.appendChild(reinicioButton);
-    // }
-    // Intenta obtener el botón de reinicio existente
-    //let restartButton = document.getElementById('restartButton');
-
-    // Si el botón de reinicio no existe, lo crea
-
-    
-
-    // Agrega el evento de click al botón de reinicio
-    //restartButton.addEventListener('click', resetGame);
-
-    // // Actualizar localStorage con las victorias al finalizar el juego
-    // window.addEventListener('beforeunload', function () {
-    //     localStorage.setItem('victories', JSON.stringify(winner));
-    // });
-
 
     // Función para reiniciar el juego
     function resetGame() {
@@ -568,7 +544,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
         if (!reinicioButton) {
             reinicioButton = document.createElement('button');
             reinicioButton.id = 'reinicioButton';
-            // Aquí puedes agregar cualquier otro código necesario para configurar el botón
             document.body.appendChild(reinicioButton);
         }
 
